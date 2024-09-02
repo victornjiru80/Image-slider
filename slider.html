@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="slider.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=poppins:wght@600&display=swap"/>
+    <title>image slider</title>
+</head>
+
+
+
+<body>
+
+
+    <div class="container">
+        <div class="slider-inner">
+
+        </div>
+    </div>
+        
+
+
+    <script>
+
+        const sliderContainer = document.querySelector(".container");
+        const innerSlider = document.querySelector(".slider-inner");
+
+        let innerContainer = innerSlider.getBoundingClientRect();
+        let outerContainer = sliderContainer.getBoundingClientRect();
+
+        //slider variables
+            let active = false;
+            startX = 0;
+
+         //image links
+            const images = [
+                "https://images.app.goo.gl/mgeihF3bp8TD55gk8", "https://images.app.goo.gl/mgeihF3bp8TD55gk8", "https://images.app.goo.gl/mgeihF3bp8TD55gk8", "https://images.app.goo.gl/mgeihF3bp8TD55gk8", "https://images.app.goo.gl/mgeihF3bp8TD55gk8"
+            ]
+
+        //events object
+            let events = {
+                mouse: {
+                    down: "mousedown",
+                    move: "mousemove",
+                    up: "mouseup"
+                },
+                touch: {
+                    down: "touchstart",
+                    move: "touchmove",
+                    up: "touchend"
+                }
+            }
+        
+
+        let deviceType = "";
+
+        //detecting a touchscreen
+            const istouchdevice = () => {
+                try {
+                    //we create a touchevent(which will fail for desktops and throw an error)
+                        document.createEvent("TouchEvent");
+                        deviceType = "touch";
+                        return true;
+
+                } catch(e) {
+                    deviceType = "mouse";
+                    return false;
+                }
+            }
+
+        //generate slides
+            const slideGenerator = () => {
+
+                for(let i of images) {
+                    const div = document.createElement("div");
+                    div.classList.add("slide")
+                    div.innerHTML = `<img src='$i' class='image' />`;
+                    innerSlider.appendChild(div);
+                }
+
+                innerSlider.style.gridTemplateColumns = `repeat(${images.length}, 1fr)`;
+            };
+
+        istouchdevice();
+
+
+        //mousedown
+        
+        sliderContainer.addEventListener(events[deviceType].down, 
+            (e) => {
+                active = "true";
+                startX = (!istouchdevice() ? e.clientX : e.touches[0].clientX - outerContainer.left) - innerSlider.offsetLeft;
+                sliderContainer.style.cursor = "grabbing";
+            })
+
+        //mouseup
+
+        sliderContainer.addEventListener(events[deviceType].up, 
+            () => {
+                sliderContainer.style.cursor = "grab";
+                active = false;
+            }
+        )
+
+
+
+        //mousemove
+
+        sliderContainer.addEventListener(events[deviceType].move,
+            (e) => {
+                if(active) {
+                    e.preventDefault();
+                    let currentX =!istouchdevice() ? e.clientX : e.touches[0].clientX - outerContainer.left;
+
+                    innerSlider.style.left = `${currentX - startX}px`;
+
+                    checkBoundary();
+                }
+            }
+         )
+
+        //check boundary of outer and inner sliders
+            const checkBoundary = () => {
+                innerContainer = innerSlider.getBoundingClientRect();
+                outerContainer = sliderContainer.getBoundingClientRect();
+
+                if( parseInt(innerSlider.style.left) >= 0 ) {
+                    innerSlider.style.left = "0px";
+                } else if (innerContainer.right < outerContainer.right) {
+
+                    innerSlider.style.left = `-${ innerContainer.width - outerContainer.width }px`;
+                }
+            };
+        
+        window.onload = () => {
+            slideGenerator();
+        };
+
+    </script>
+
+
+</body>
+</html>
