@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,11 +59,10 @@
         //detecting a touchscreen
             const istouchdevice = () => {
                 try {
-                    //we create a touchevent(which will fail for desktops and throw an error)
+                    //Creating a touchevent (which will fail for desktops and throw an error)
                         document.createEvent("TouchEvent");
                         deviceType = "touch";
                         return true;
-
                 } catch(e) {
                     deviceType = "mouse";
                     return false;
@@ -120,7 +120,9 @@
             }
          )
 
+        
         //check boundary of outer and inner sliders
+        
             const checkBoundary = () => {
                 innerContainer = innerSlider.getBoundingClientRect();
                 outerContainer = sliderContainer.getBoundingClientRect();
